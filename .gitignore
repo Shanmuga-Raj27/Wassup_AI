@@ -1,1 +1,4 @@
 .venv
+.env
+
+/backend/temp-test
