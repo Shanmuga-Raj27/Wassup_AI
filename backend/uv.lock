@@ -256,6 +256,7 @@ dependencies = [
     { name = "ddgs" },
     { name = "fastapi" },
     { name = "google-genai" },
+    { name = "python-dotenv" },
     { name = "trafilatura" },
     { name = "uvicorn" },
 ]
@@ -266,6 +267,7 @@ requires-dist = [
     { name = "ddgs", specifier = ">=9.16.1" },
     { name = "fastapi", specifier = ">=0.165.0" },
     { name = "google-genai", specifier = ">=3.6.1" },
+    { name = "python-dotenv", specifier = ">=1.2.4" },
     { name = "trafilatura", specifier = ">=2.3.1" },
     { name = "uvicorn", specifier = ">=0.54.0" },
 ]

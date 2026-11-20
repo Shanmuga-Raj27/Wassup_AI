@@ -9,6 +9,7 @@ dependencies = [
     "ddgs>=9.16.1",
     "fastapi>=0.165.0",
     "google-genai>=3.6.1",
+    "python-dotenv>=1.2.4",
     "trafilatura>=2.3.1",
     "uvicorn>=0.54.0",
 ]
