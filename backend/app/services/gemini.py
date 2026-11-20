@@ -25,8 +25,8 @@ try:
         if not prompt:
             continue
 
-        # 1. Fetch live web search results using ddgs & format context
-        print("🔍 Searching the web...")
+        # 1. Fetch live search results via DDGS metasearch & format context
+        print("🔍 Searching the web via DDGS...")
         search_data = search_web(prompt, max_results=3)
         search_context = format_search_results(search_data)
 
@@ -45,9 +45,9 @@ try:
         # Save this interaction ID for the next message
         previous_id = response.id
 
-        print("\n--- [DEBUG: Search Context Sent to Gemini] ---")
-        print(search_context)
-        print("---------------------------------------------\n")
+        # print("\n--- [DEBUG: Search Context Sent to Gemini] ---")
+        # print(search_context)
+        # print("---------------------------------------------\n")
 
         # Display the AI response
         print("AI:", response.output_text)

@@ -1,4 +1,4 @@
-# backend/app/services/prompts.py
+# backend/app/services/prompt.py
 
 SYSTEM_PROMPT = """You are a fast, concise, and helpful AI web agent.
 

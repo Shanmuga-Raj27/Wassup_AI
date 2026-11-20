@@ -1,18 +1,17 @@
 
-#DuckDuckGo Web Search Service using ddgs
+# DDGS (Dux Distributed Global Search) Metasearch Service
+# An open-source metasearch library aggregating multi-engine results without API keys.
 
 from typing import List, Dict, Any
 from ddgs import DDGS
 
 
 def search_web(query: str, max_results: int = 4) -> List[Dict[str, Any]]:
-    
-    # Search DuckDuckGo and return a list of search result dictionaries:
+    # Search via DDGS metasearch and return list of result dicts:
     # Each dict contains: 'title', 'href' (link), 'body' (snippet).
-
     try:
-        # DDGS context manager handles opening and closing sessions cleanly
-        with DDGS() as ddgs:
+        # DDGS context manager with timeout to prevent network stalls
+        with DDGS(timeout=5) as ddgs:
             results = list(ddgs.text(query, max_results=max_results))
             return results
     except Exception as exc:
