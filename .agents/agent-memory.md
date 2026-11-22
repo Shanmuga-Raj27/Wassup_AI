@@ -55,6 +55,7 @@ web-agent/
 │   │   └── phase-1-ddgs-gemini-integration.md  # Phase 1 integration documentation
 │   ├── system design/               # System design documents
 │   └── tutorials/                   # Step-by-step tutorials
+│       └── ai-agent-rag-and-tool-calling-guide.md  # Comprehensive RAG & Agent concepts tutorial
 └── frontend/                        # Frontend workspace (reserved for client application)
 ```
 
@@ -71,6 +72,8 @@ web-agent/
 | **Streamlit AI Service** | `backend/streamlit/stream_ai.py` | `generate_agent_response()` | Operational |
 | **Streamlit Debug UI** | `backend/streamlit/stream_app.py` | Chat interface, debug expander, session state | Operational |
 | **Phase 1 Specs & Reference** | `documentation/phases/phase-1-ddgs-gemini-integration.md` | System diagrams, RAG pipeline specs | Complete |
+| **Phase 1.5 Implementation Plan** | `.agents/implement_plan/manual-tool-calling-ddgs.md` | Manual tool calling & DDGS execution plan | Complete |
+| **Agent & RAG Tutorial** | `documentation/tutorials/ai-agent-rag-and-tool-calling-guide.md` | Concepts guide: RAG patterns, tools & agents | Complete |
 | **Agent Operational Rules** | `.agents/agent-rules.md` | Tech stack bounds, privacy rules, bash limits | Active |
 
 ---
