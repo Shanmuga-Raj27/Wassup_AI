@@ -39,8 +39,15 @@ def format_search_results(results: List[Dict[str, Any]]) -> str:
     return "\n\n".join(formatted_items)
 
 
+def search_web_tool(query: str, max_results: int = 3) -> str:
+    # Metasearch tool looking up live facts, news, and external documentation
+    # Parameter query: Concise search keywords formulated to find relevant factual information
+    # Parameter max_results: Number of web results to retrieve (default is 3)
+    raw_results = search_web(query=query, max_results=max_results)
+    return format_search_results(raw_results)
+
+
 # Quick standalone test if you run: python backend/app/services/web_search.py
 if __name__ == "__main__":
     test_query = "FastAPI Python"
-    results = search_web(test_query, max_results=2)
-    print(format_search_results(results))
+    print(search_web_tool(test_query, max_results=2))

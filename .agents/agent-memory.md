@@ -66,13 +66,14 @@ web-agent/
 | **Settings & Env Loading** | `backend/app/core/config.py` | `Settings`, `settings.GEMINI_API_KEY` | Operational |
 | **Metasearch Execution** | `backend/app/services/web_search.py` | `search_web()`, `format_search_results()` | Operational |
 | **Prompt Engineering** | `backend/app/services/prompt.py` | `SYSTEM_PROMPT`, `augmented_prompt()` | Operational |
-| **Agent Chat Orchestration** | `backend/app/services/gemini.py` | `client.interactions.create()`, interactive loop | Operational |
+| **Agent Chat Orchestration** | `backend/app/services/gemini.py` | `client.chats.create()`, interactive loop, manual tool execution | Operational |
+| **Model Error & Retry Handling** | `backend/app/services/error_handler.py` | `get_default_http_options()`, `handle_api_error()`, `handle_gemini_error()` | Operational |
 | **Web Content Scraping** | `backend/app/services/web_scrap.py` | Web scraping logic (`trafilatura` / `crawl4ai`) | In Progress |
 | **FastAPI Root Server** | `backend/main.py` | `app`, `/`, `/health` endpoints | Operational |
 | **Streamlit AI Service** | `backend/streamlit/stream_ai.py` | `generate_agent_response()` | Operational |
 | **Streamlit Debug UI** | `backend/streamlit/stream_app.py` | Chat interface, debug expander, session state | Operational |
 | **Phase 1 Specs & Reference** | `documentation/phases/phase-1-ddgs-gemini-integration.md` | System diagrams, RAG pipeline specs | Complete |
-| **Phase 1.5 Implementation Plan** | `.agents/implement_plan/manual-tool-calling-ddgs.md` | Manual tool calling & DDGS execution plan | Complete |
+| **Phase 1.5 Implementation Plan** | `.agents/agents_plan/phase-1.5-manual-tool-calling.md` | Manual tool calling & DDGS step-by-step execution plan | Ready for Implementation |
 | **Agent & RAG Tutorial** | `documentation/tutorials/ai-agent-rag-and-tool-calling-guide.md` | Concepts guide: RAG patterns, tools & agents | Complete |
 | **Agent Operational Rules** | `.agents/agent-rules.md` | Tech stack bounds, privacy rules, bash limits | Active |
 

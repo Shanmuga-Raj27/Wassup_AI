@@ -1,9 +1,9 @@
 # Developer Implementation Plan: Manual Tool Calling for DDGS Metasearch
 
-> **Document Target:** `.agents/implement_plan/manual-tool-calling-ddgs.md`  
-> **Audience:** Human developers and engineers building the Web Agent project.  
-> **Status:** Planning & Architectural Reference (Pre-Execution).  
-> **Objective:** Transition from Phase 1 (Eager RAG Search) to Phase 1.5 (Autonomous LLM-Governed Tool Calling) using DDGS metasearch and Google GenAI SDK (`google-genai`).
+ **Document Target:** `.agents/implement_plan/manual-tool-calling-ddgs.md`  
+ **Audience:** Human developers and engineers building the Web Agent project.  
+ **Status:** Planning & Architectural Reference (Pre-Execution).  
+ **Objective:** Transition from Phase 1 (Eager RAG Search) to Phase 1.5 (Autonomous LLM-Governed Tool Calling) using DDGS metasearch and Google GenAI SDK (`google-genai`).
 
 ---
 
@@ -25,14 +25,14 @@ The Google GenAI SDK supports two methods for executing tools:
 
 ```text
 +----------------------------------------------------------------------------------------------------+
-|                                WHY MANUAL TOOL EXECUTION?                                         |
+|                                WHY MANUAL TOOL EXECUTION?                                          |
 +----------------------------------------------------------------------------------------------------+
-| 1. Deep Conceptual Understanding: You see the exact JSON-RPC / tool-call protocol exchanged       |
+| 1. Deep Conceptual Understanding: You see the exact JSON-RPC / tool-call protocol exchanged        |
 |    between client and cloud LLM.                                                                   |
-| 2. UI Transparency (Streamlit): You can intercept the tool call in real-time, extract the query,  |
+| 2. UI Transparency (Streamlit): You can intercept the tool call in real-time, extract the query,   |
 |    and trigger live UI status boxes (e.g. st.status("Searching DDGS for 'python 3.13'...")).       |
-| 3. Resilient Error Handling: You can gracefully catch search timeouts or network drops and format |
-|    a clean error message for the model without crashing the chat session.                         |
+| 3. Resilient Error Handling: You can gracefully catch search timeouts or network drops and format  |
+|    a clean error message for the model without crashing the chat session.                          |
 | 4. Seamless Stepping Stone to Phase 2: Building a manual loop makes adding a second tool           |
 |    (such as full webpage scraping with Trafilatura) straightforward and transparent.               |
 +----------------------------------------------------------------------------------------------------+
@@ -132,10 +132,10 @@ Understanding where our architecture sits in the broader landscape of Retrieval-
 
 ```text
 +---------------------+---------------------------------------------------------------------------------+
-| RAG Pattern Type    | Description & Relevance to Our Project                                         |
+| RAG Pattern Type    | Description & Relevance to Our Project                                          |
 +---------------------+---------------------------------------------------------------------------------+
 | 1. Naive / Eager    | Unconditional retrieval before generation.                                      |
-|    RAG (Phase 1)    | Every prompt queries the external index. No model agency.                        |
+|    RAG (Phase 1)    | Every prompt queries the external index. No model agency.                       |
 |                     | Status: Replaced in this phase.                                                 |
 +---------------------+---------------------------------------------------------------------------------+
 | 2. Modular /        | The LLM autonomously decides *if* and *when* to retrieve. It formulates custom  |
@@ -143,7 +143,7 @@ Understanding where our architecture sits in the broader landscape of Retrieval-
 |    (Phase 1.5)      | Status: Target of this implementation plan.                                     |
 +---------------------+---------------------------------------------------------------------------------+
 | 3. Deep Corrective  | The LLM searches, evaluates the relevance of snippets and source URLs, and if   |
-|    RAG (Phase 2)    | shallow, triggers a second tool (web scraping) to inspect the full page content. |
+|    RAG (Phase 2)    | shallow, triggers a second tool (web scraping) to inspect the full page content.|
 |                     | Status: Next phase (Trafilatura integration).                                   |
 +---------------------+---------------------------------------------------------------------------------+
 ```
