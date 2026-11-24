@@ -56,10 +56,16 @@ try:
         # Turn 1: Send user prompt to Gemini
         response = chat.send_message(user_prompt)
 
-        # Turn 2: Check if Gemini decided to invoke a tool
-        if response.function_calls:
+        # Turn 2+: Iterative tool resolution loop (handles multiple tool turns if needed)
+        max_tool_turns = 3
+        current_turn = 0
+
+        while response.function_calls and current_turn < max_tool_turns:
+            current_turn += 1
+            response_parts = []
+
             for tool_call in response.function_calls:
-                print(f"\n[Tool Requested] Function: {tool_call.name}")
+                print(f"\n[Tool Requested #{current_turn}] Function: {tool_call.name}")
                 print(f"[Tool Arguments] {tool_call.args}")
 
                 # Match and execute local tool function
@@ -70,16 +76,25 @@ try:
                     print(f"[Executing DDGS] Searching for: '{search_query}'...")
                     tool_output = search_web_tool(query=search_query, max_results=max_res)
 
-                    # Send tool execution result back to Gemini
-                    response = chat.send_message(
+                    # Prepare function response part
+                    response_parts.append(
                         types.Part.from_function_response(
                             name=tool_call.name,
                             response={"result": tool_output}
                         )
                     )
 
+            if response_parts:
+                # Send tool execution results back to Gemini
+                response = chat.send_message(response_parts)
+            else:
+                break
+
         # Deliver final grounded response
-        print("\nAI:", response.text)
+        if response.text:
+            print("\nAI:", response.text)
+        else:
+            print("\nAI: Completed tool requests, but no final text response was returned.")
         print("-" * 50 + "\n")
 
 except errors.APIError as error:
