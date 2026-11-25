@@ -64,7 +64,7 @@ web-agent/
 | Responsibility | Target File Path | Key Functions / Classes | Status |
 | :--- | :--- | :--- | :--- |
 | **Settings & Env Loading** | `backend/app/core/config.py` | `Settings`, `settings.GEMINI_API_KEY` | Operational |
-| **Metasearch Execution** | `backend/app/services/web_search.py` | `search_web()`, `format_search_results()` | Operational |
+| **Metasearch Execution** | `backend/app/services/web_search.py` | `search_web()`, `filter_dense_results()`, `format_search_results()`, `search_web_tool()` | Operational |
 | **Prompt Engineering** | `backend/app/services/prompt.py` | `SYSTEM_PROMPT`, `augmented_prompt()` | Operational |
 | **Agent Chat Orchestration** | `backend/app/services/gemini.py` | `client.chats.create()`, interactive loop, manual tool execution | Operational |
 | **Model Error & Retry Handling** | `backend/app/services/error_handler.py` | `get_default_http_options()`, `handle_api_error()`, `handle_gemini_error()` | Operational |
@@ -74,7 +74,7 @@ web-agent/
 | **Streamlit Debug UI** | `backend/streamlit/stream_app.py` | Chat interface, dynamic status box, debug expander | Operational |
 | **Phase 1 Specs & Reference** | `documentation/phases/phase-1-ddgs-gemini-integration.md` | System diagrams, RAG pipeline specs | Complete |
 | **Phase 1.5 Implementation Plan** | `.agents/agents_plan/phase-1.5-manual-tool-calling.md` | Manual tool calling & DDGS step-by-step execution plan | Complete |
-| **Phase 1.8 Implementation Plan** | `documentation/dev_docs/implement_plan/phase-1.8-improving-ddgs-search-content.md` | Improving DDGS search content & dynamic source targeting plan | Complete |
+| **Phase 1.8 Implementation Plan** | `.agents/agents_plan/phase-1.8-improving-ddgs-search-content.md` | Improving DDGS search content & dynamic source targeting plan | Complete |
 | **Agent & RAG Tutorial** | `documentation/tech_docs/tutorials/ai-agent-rag-and-tool-calling-guide.md` | Concepts guide: RAG patterns, tools & agents | Complete |
 | **Model Speed & Search Tutorial** | `documentation/tech_docs/tutorials/improving-ai-model-and-ddgs-search.md` | Practical guide: error handling, retries, and ddgs search improvements | Complete |
 | **Agent Operational Rules** | `.agents/agent-rules.md` | Tech stack bounds, privacy rules, bash limits | Active |

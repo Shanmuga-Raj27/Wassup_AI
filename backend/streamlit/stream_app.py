@@ -12,7 +12,7 @@ for dir_path in (CURRENT_DIR, BACKEND_DIR):
     if str(dir_path) not in sys.path:
         sys.path.insert(0, str(dir_path))
 
-from stream_ai import create_agent_chat, run_chat_turn
+from app.services.gemini import create_agent_chat, run_chat_turn
 
 # Configure Streamlit page metadata and layout
 st.set_page_config(
@@ -39,7 +39,7 @@ with st.sidebar:
     st.subheader("🔍 Session Debug Info")
     st.caption("Model: `gemini-3.5-flash-lite`")
     st.caption("Execution Mode: `Manual Tool Calling (Disabled AFC)`")
-    st.caption("Search Engine: `DDGS (Multi-Engine Fallback)`")
+    st.caption("Search Engine: `DDGS (Multi-Engine & Category Support)`")
 
 # Initialize persistent chat session in session state
 if "chat" not in st.session_state:
@@ -75,8 +75,9 @@ if user_prompt := st.chat_input("Ask anything (e.g. 'What is the latest release 
             )
 
             if tool_used and tool_info:
+                category_label = tool_info.get("category", "text").capitalize()
                 status_box.update(
-                    label=f"Searched DDGS for: '{tool_info['query']}'",
+                    label=f"Searched DDGS ({category_label}) for: '{tool_info['query']}'",
                     state="complete",
                     expanded=False
                 )

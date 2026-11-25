@@ -62,13 +62,22 @@ def run_chat_turn(chat, user_prompt: str):
                 if tool_call.name == "search_web_tool":
                     tool_executed = True
                     query = tool_call.args.get("query", user_prompt)
-                    max_results = int(tool_call.args.get("max_results", 3))
+                    category = tool_call.args.get("category", "text")
+                    timelimit = tool_call.args.get("timelimit", None)
+                    max_results = int(tool_call.args.get("max_results", 4))
 
                     # Execute DDGS metasearch locally
-                    search_context = search_web_tool(query=query, max_results=max_results)
+                    search_context = search_web_tool(
+                        query=query,
+                        category=category,
+                        timelimit=timelimit,
+                        max_results=max_results,
+                    )
                     tool_details = {
                         "tool_name": tool_call.name,
                         "query": query,
+                        "category": category,
+                        "timelimit": timelimit,
                         "search_context": search_context,
                     }
 
