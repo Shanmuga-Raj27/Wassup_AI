@@ -15,6 +15,7 @@ if str(BACKEND_DIR) not in sys.path:
 from app.core.config import settings
 from app.services.prompt import SYSTEM_PROMPT
 from app.services.web_search import search_web_tool
+from app.services.web_scrap import scrape_url_tool
 from app.services.error_handler import (
     get_default_http_options,
     handle_api_error,
@@ -29,10 +30,10 @@ client = genai.Client(
 
 
 def create_agent_chat():
-    # Factory creating a fresh chat session with tool calling and retry rules
+    # Factory creating a fresh chat session with dual tools and retry rules
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
-        tools=[search_web_tool],
+        tools=[search_web_tool, scrape_url_tool],
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         http_options=get_default_http_options(),
     )
@@ -43,10 +44,10 @@ def create_agent_chat():
 
 
 def run_chat_turn(chat, user_prompt: str):
-    # Core agent runner executing one conversational turn and resolving tool calls
+    # Core agent runner executing one conversational turn and resolving multi-step tool calls
     tool_executed = False
-    tool_details = None
-    max_tool_turns = 3
+    tool_history = []
+    max_tool_turns = 4
     current_turn = 0
 
     try:
@@ -73,13 +74,13 @@ def run_chat_turn(chat, user_prompt: str):
                         timelimit=timelimit,
                         max_results=max_results,
                     )
-                    tool_details = {
+                    tool_history.append({
                         "tool_name": tool_call.name,
                         "query": query,
                         "category": category,
                         "timelimit": timelimit,
-                        "search_context": search_context,
-                    }
+                        "output": search_context,
+                    })
 
                     # Wrap tool output in a function response part
                     response_parts.append(
@@ -89,8 +90,28 @@ def run_chat_turn(chat, user_prompt: str):
                         )
                     )
 
+                elif tool_call.name == "scrape_url_tool":
+                    tool_executed = True
+                    target_url = tool_call.args.get("url", "")
+
+                    # Execute Trafilatura webpage extraction
+                    scraped_content = scrape_url_tool(url=target_url)
+                    tool_history.append({
+                        "tool_name": tool_call.name,
+                        "url": target_url,
+                        "output": scraped_content,
+                    })
+
+                    # Wrap scraped output in a function response part
+                    response_parts.append(
+                        types.Part.from_function_response(
+                            name=tool_call.name,
+                            response={"result": scraped_content},
+                        )
+                    )
+
             if response_parts:
-                # Send tool results back to Gemini for final synthesis
+                # Send tool results back to Gemini for next decision or final synthesis
                 response = chat.send_message(response_parts)
             else:
                 break
@@ -101,6 +122,7 @@ def run_chat_turn(chat, user_prompt: str):
         else:
             ai_reply = "Completed tool requests, but no final text response was returned."
 
+        tool_details = {"steps": tool_history} if tool_history else None
         return ai_reply, tool_executed, tool_details
 
     except errors.APIError as error:
@@ -134,12 +156,16 @@ if __name__ == "__main__":
             # Run the turn using the shared function
             ai_text, tool_used, tool_info = run_chat_turn(cli_chat, user_input)
 
-            # Print debug info if a tool was called
-            if tool_used and tool_info:
-                cat = tool_info.get("category", "text")
-                tl = tool_info.get("timelimit")
-                tl_info = f", timelimit: '{tl}'" if tl else ""
-                print(f"\n[Tool Executed] {tool_info['tool_name']} (category: '{cat}'{tl_info}) with query: '{tool_info['query']}'")
+            # Print debug info for every tool step executed in this turn
+            if tool_used and tool_info and tool_info.get("steps"):
+                for step in tool_info["steps"]:
+                    if step["tool_name"] == "search_web_tool":
+                        cat = step.get("category", "text")
+                        tl = step.get("timelimit")
+                        tl_info = f", timelimit: '{tl}'" if tl else ""
+                        print(f"\n[Tool Executed] {step['tool_name']} (category: '{cat}'{tl_info}) with query: '{step['query']}'")
+                    elif step["tool_name"] == "scrape_url_tool":
+                        print(f"\n[Tool Executed] {step['tool_name']} on URL: '{step['url']}'")
 
             # Print final AI response
             print(f"\nAI: {ai_text}")

@@ -1,5 +1,5 @@
 # backend/streamlit/stream_ai.py
-# AI generation service for Streamlit UI using Google GenAI SDK and DDGS metasearch
+# AI generation service for Streamlit UI using Google GenAI SDK, DDGS, and Trafilatura
 
 import sys
 from pathlib import Path
@@ -15,6 +15,7 @@ if str(BACKEND_DIR) not in sys.path:
 from app.core.config import settings
 from app.services.prompt import SYSTEM_PROMPT
 from app.services.web_search import search_web_tool
+from app.services.web_scrap import scrape_url_tool
 from app.services.error_handler import (
     get_default_http_options,
     handle_api_error,
@@ -29,10 +30,10 @@ client = genai.Client(
 
 
 def create_agent_chat():
-    # Factory instantiating a fresh chat session with tool declaration, manual execution, and retry options
+    # Factory instantiating a fresh chat session with dual tools, manual execution, and retry options
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
-        tools=[search_web_tool],
+        tools=[search_web_tool, scrape_url_tool],
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         http_options=get_default_http_options(),
     )
@@ -43,10 +44,10 @@ def create_agent_chat():
 
 
 def run_chat_turn(chat, user_prompt: str):
-    # Execution handler for a user turn with manual tool resolution and metadata capture
+    # Execution handler for a user turn with manual multi-step tool resolution
     tool_executed = False
-    tool_details = None
-    max_tool_turns = 3
+    tool_history = []
+    max_tool_turns = 4
     current_turn = 0
 
     try:
@@ -73,19 +74,39 @@ def run_chat_turn(chat, user_prompt: str):
                         timelimit=timelimit,
                         max_results=max_results,
                     )
-                    tool_details = {
+                    tool_history.append({
                         "tool_name": tool_call.name,
                         "query": query,
                         "category": category,
                         "timelimit": timelimit,
-                        "search_context": search_context,
-                    }
+                        "output": search_context,
+                    })
 
                     # Prepare function response payload
                     response_parts.append(
                         types.Part.from_function_response(
                             name=tool_call.name,
                             response={"result": search_context},
+                        )
+                    )
+
+                elif tool_call.name == "scrape_url_tool":
+                    tool_executed = True
+                    target_url = tool_call.args.get("url", "")
+
+                    # Execute Trafilatura webpage extraction locally
+                    scraped_content = scrape_url_tool(url=target_url)
+                    tool_history.append({
+                        "tool_name": tool_call.name,
+                        "url": target_url,
+                        "output": scraped_content,
+                    })
+
+                    # Prepare function response payload
+                    response_parts.append(
+                        types.Part.from_function_response(
+                            name=tool_call.name,
+                            response={"result": scraped_content},
                         )
                     )
 
@@ -101,6 +122,7 @@ def run_chat_turn(chat, user_prompt: str):
         else:
             ai_reply = "Completed tool requests, but no final text response was returned."
 
+        tool_details = {"steps": tool_history} if tool_history else None
         return ai_reply, tool_executed, tool_details
 
     except errors.APIError as error:

@@ -16,14 +16,14 @@ from app.services.gemini import create_agent_chat, run_chat_turn
 
 # Configure Streamlit page metadata and layout
 st.set_page_config(
-    page_title="Web Agent Prototype",
+    page_title="Wassup AI",
     page_icon="🌐",
     layout="wide"
 )
 
 # Header Section
-st.title("🌐 Web Agent: Autonomous Search & Chat")
-st.caption("Testing and debugging interface powered by Gemini Tool Calling and DDGS Metasearch")
+st.title("🌐 Wassup AI")
+st.caption("Web Agent Search, Scrape & Understand Pages")
 
 # Sidebar Configuration and Debugging Controls
 with st.sidebar:
@@ -39,7 +39,7 @@ with st.sidebar:
     st.subheader("🔍 Session Debug Info")
     st.caption("Model: `gemini-3.5-flash-lite`")
     st.caption("Execution Mode: `Manual Tool Calling (Disabled AFC)`")
-    st.caption("Search Engine: `DDGS (Multi-Engine & Category Support)`")
+    st.caption("Tools: `DDGS Metasearch + Trafilatura Scraper`")
 
 # Initialize persistent chat session in session state
 if "chat" not in st.session_state:
@@ -74,25 +74,36 @@ if user_prompt := st.chat_input("Ask anything (e.g. 'What is the latest release 
                 user_prompt=user_prompt
             )
 
-            if tool_used and tool_info:
-                category_label = tool_info.get("category", "text").capitalize()
+            if tool_used and tool_info and tool_info.get("steps"):
+                step_labels = []
+                debug_sections = []
+                for step in tool_info["steps"]:
+                    if step["tool_name"] == "search_web_tool":
+                        cat = step.get("category", "text").capitalize()
+                        step_labels.append(f"Searched DDGS ({cat}): '{step['query']}'")
+                        debug_sections.append(f"--- DDGS Search ({cat}): {step['query']} ---\n{step['output']}")
+                    elif step["tool_name"] == "scrape_url_tool":
+                        step_labels.append(f"Scraped: {step['url']}")
+                        debug_sections.append(f"--- Trafilatura Scrape: {step['url']} ---\n{step['output']}")
+
                 status_box.update(
-                    label=f"Searched DDGS ({category_label}) for: '{tool_info['query']}'",
+                    label=" -> ".join(step_labels),
                     state="complete",
                     expanded=False
                 )
+                debug_text = "\n\n".join(debug_sections)
             else:
                 status_box.update(
-                    label="Answered directly (no search needed)",
+                    label="Answered directly (no tools needed)",
                     state="complete",
                     expanded=False
                 )
+                debug_text = None
 
         # Render final grounded AI response
         st.markdown(ai_reply)
 
-        # Render debug expander if external search context was retrieved
-        debug_text = tool_info["search_context"] if (tool_used and tool_info) else None
+        # Render debug expander if external web context was retrieved
         if debug_text:
             with st.expander("🔍 View Retrieved Web Context"):
                 st.text(debug_text)
