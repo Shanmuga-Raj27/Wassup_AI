@@ -2,21 +2,6 @@
 
 A simple step-by-step guide to deploy your **Wassup AI** Streamlit app (`backend/streamlit/stream_app.py`) to **Streamlit Community Cloud** for free without a credit card.
 
----
-
-## Can I Create a Separate `requirements.txt` Only for Streamlit Deploy?
-
-**Yes—and you should!**
-
-Streamlit Community Cloud automatically checks for a `requirements.txt` file in the **same folder as your main app file** (`backend/streamlit/requirements.txt`) before checking the repository root.
-
-Creating a separate `backend/streamlit/requirements.txt`:
-- **Keeps your local setup untouched:** `backend/pyproject.toml`, `backend/uv.lock`, and `backend/requirements.txt` stay exactly as they are.
-- **Avoids heavy unused packages:** Your full `backend/requirements.txt` includes `crawl4ai` and `playwright` (~130 packages) which are not used in Phase 2 and can slow down or exceed free cloud memory limits.
-- **Installs in ~30 seconds:** Only the 5 packages needed by `stream_app.py` are installed.
-
----
-
 ## Step 1: Create `backend/streamlit/requirements.txt`
 
 Create a new file at `backend/streamlit/requirements.txt` with only the packages needed to run the Streamlit app:
@@ -52,12 +37,12 @@ python-dotenv>=1.2.4
 
 ## Step 4: Configure Your App Deployment
 
-1. Click **Create app** $\rightarrow$ **Yup, I have an app** (Deploy a public or private app from GitHub).
+1. Click **Create app**
 2. Fill in the deployment form:
-   - **Repository:** `<your-github-username>/web-agent`
+   - **Repository:** `<your-github-username>/Wassup_AI`
    - **Branch:** `main` *(or your active branch)*
    - **Main file path:** `backend/streamlit/stream_app.py`
-   - **App URL (optional):** Choose a custom subdomain like `wassup-ai.streamlit.app`.
+   - **App URL (optional):** Choose a custom subdomain like `wassupai.streamlit.app`.
 
 ---
 
