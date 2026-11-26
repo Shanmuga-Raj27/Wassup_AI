@@ -31,8 +31,11 @@ def scrape_webpage(url: str, max_chars: int = 6000) -> str:
 
 
 def scrape_url_tool(url: str) -> str:
-    # Extracts clean main text from a webpage URL for deep reading or summarization
-    # Parameter url: Full http or https URL of the webpage to scrape
+    """Extract clean main article text and title from a specific webpage URL.
+
+    Args:
+        url: Full http or https URL of the article, blog, or documentation page to read.
+    """
     return scrape_webpage(url=url)
 
 

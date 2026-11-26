@@ -1,7 +1,7 @@
 # DDGS (Dux Distributed Global Search) Metasearch Service
 # An open-source metasearch library aggregating multi-engine results without API keys.
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Literal
 from ddgs import DDGS
 
 
@@ -77,15 +77,18 @@ def format_search_results(results: List[Dict[str, Any]]) -> str:
 
 def search_web_tool(
     query: str,
-    category: str = "text",
-    timelimit: Optional[str] = None,
+    category: Literal["text", "news"] = "text",
+    timelimit: Optional[Literal["d", "w", "m"]] = None,
     max_results: int = 4,
 ) -> str:
-    # Metasearch tool looking up real-time web facts, news, and documentation
-    # Parameter query: Concise search keywords formulated to locate relevant facts
-    # Parameter category: Use "text" for technical docs, general knowledge, or coding; use "news" for breaking news, current events, or sports updates
-    # Parameter timelimit: Use "d" (day) or "w" (week) for recent time-sensitive queries; leave None for static topics
-    # Parameter max_results: Number of web results to return
+    """Search the live web using DDGS metasearch for real-time facts, news, or documentation.
+
+    Args:
+        query: Concise search keywords (3 to 6 words) formulated to locate relevant facts.
+        category: Search index to query. Use "text" for docs, general knowledge, or coding; use "news" for breaking news, current events, or sports updates.
+        timelimit: Freshness filter. Use "d" (past 24h), "w" (past week), or "m" (past month) for recent queries; leave None for evergreen topics.
+        max_results: Number of web results to return (default 4).
+    """
     raw = search_web(query=query, category=category, timelimit=timelimit, max_results=max_results)
     dense = filter_dense_results(raw)
     return format_search_results(dense[:max_results])

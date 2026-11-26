@@ -1,6 +1,6 @@
 # Project Rules & Agent Operating Guidelines
 
-> Strict operational rulebook for AI agents working in this repository. All rules are mandatory and non-negotiable.
+ Strict operational rulebook for AI agents working in this repository. All rules are mandatory and non-negotiable.
 
 ---
 
@@ -59,6 +59,7 @@ Always ask clarifying questions and request explicit user confirmation before:
 
 ---
 
-## 8. Code Comments & Explanation Syntax
-- **Always use `#` for comments and explanations:** Every line of code explanation, commentary, or operational note inside Python and script files must strictly use single-line `#` comments.
-- **Never use multi-line docstring comments (`"""` or `'''`):** Do not use triple-quoted strings as comments or explanation blocks, as they can be easily confused with actual multiline string literals in code.
+## 8. Code Comments, Docstrings & Tool Schemas
+- **Always use `#` for code explanations:** Every line of inline code explanation, commentary, or operational note inside Python and script files must strictly use single-line `#` comments.
+- **Never use triple-quoted strings (`"""` or `'''`) as general comments:** Do not use triple-quoted strings as comment blocks or casual explanations.
+- **Always use proper Python docstrings (`"""..."""`) and `Literal` enums for AI tool functions:** Any Python function registered as a Gemini tool (e.g., in `tools=[...]`) must use a Google-style `"""..."""` docstring (describing the tool and each parameter under `Args:`) along with `Literal[...]` enum type hints where applicable, so Gemini receives full parameter descriptions and valid options in its tool schema.
